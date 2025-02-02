@@ -1,106 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Income Tax Calculator</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Income Tax Calculator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 
 </head>
+
 <body>
 
-  <div class="container">
-    <div class="row">
-      <div class="col-md-6 mx-auto">
-        <div class="card">
-          <div class="card-body">
-            <h3 class="card-title text-center">Income Tax Calculator (FY 2025-26)</h3>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title text-center">Income Tax Calculator (FY 2025-26)</h3>
 
-            <form id="taxCalculatorForm">
-              <div class="mb-3">
-                <label for="income" class="form-label">Enter Your Annual Income (₹)</label>
-                <input type="text" class="form-control" id="income" required>
-              </div>
+                        <form id="taxCalculatorForm">
+                            <div class="mb-3">
+                                <label for="income" class="form-label">Enter Your Annual Income (₹)</label>
+                                <input type="text" class="form-control" id="income" required>
+                            </div>
 
-              <div class="mb-3">
-                <div class="word-output" id="incomeInWords"></div>
-              </div>
+                            <div class="mb-3">
+                                <div class="word-output" id="incomeInWords"></div>
+                            </div>
 
-              <div class="mb-3">
-                <button type="submit" class="btn btn-primary w-100">Calculate Tax</button>
-              </div>
+                            <div class="mb-3">
+                                <button type="submit" class="btn btn-primary w-100">Calculate Tax</button>
+                            </div>
 
-              <div class="mb-3">
-                <button type="button" class="btn btn-secondary w-100" id="refreshBtn">Refresh</button>
-              </div>
+                            <div class="mb-3">
+                                <button type="button" class="btn btn-secondary w-100" id="refreshBtn">Refresh</button>
+                            </div>
 
-              <div class="tax-result text-center" id="taxResult"></div>
-              <div class="tax-result-words text-center" id="taxResultWords"></div>
-            </form>
-          </div>
+                            <div class="tax-result text-center" id="taxResult"></div>
+                            <div class="tax-result-words text-center" id="taxResultWords"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 
-  <script>
-    // Function to format number in Indian numbering system (comma separated)
-    function formatNumberIndian(num) {
-      let str = num.replace(/[^0-9]/g, ''); // Remove any non-numeric characters
+    <script>
+        // Function to format number in Indian numbering system (comma separated)
+       // Function to format number in Indian numbering system (comma separated)
+function formatNumberIndian(num) {
+  let str = num.replace(/[^0-9]/g, ''); // Remove any non-numeric characters
 
-      // Separate the last three digits (thousands)
-      let lastThree = str.slice(-3);
-      let otherNumbers = str.slice(0, -3);
+  // Separate the last three digits (thousands)
+  let lastThree = str.slice(-3);
+  let otherNumbers = str.slice(0, -3);
 
-      // Add commas after every 2 digits for lakhs and crores
-      otherNumbers = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",");
+  // Add commas after every 2 digits for lakhs and crores
+  otherNumbers = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",");
 
-      return otherNumbers + ',' + lastThree;
-    }
+  return otherNumbers + ',' + lastThree;
+}
 
-    // Function to convert number to words with Indian numbering system
-    function numberToWords(num) {
-      const ones = [
-        '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 
-        'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 
-        'Eighteen', 'Nineteen'
-      ];
-      const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
-      const scales = ['', 'Hundred', 'Thousand', 'Lakh', 'Crore'];
+// Event listener for income input - Format and display number with commas as user types
+document.getElementById('income').addEventListener('input', function() {
+  let incomeValue = this.value.replace(/,/g, '');  // Remove any existing commas
+  if (!isNaN(incomeValue) && incomeValue !== '') {
+    let formattedValue = formatNumberIndian(incomeValue);
+    this.value = formattedValue;  // Update the input with formatted value
+  }
+});
 
-      if (num === 0) return 'Zero';
-
-      let word = '';
-      let scaleIndex = 0;
-
-      // Process number in chunks (hundreds, thousands, lakhs, crores)
-      while (num > 0) {
-        if (num % 100 < 20) {
-          word = ones[num % 100] + (scales[scaleIndex] ? ' ' + scales[scaleIndex] : '') + ' ' + word;
-          num = Math.floor(num / 100);
-        } else {
-          word = tens[Math.floor((num % 100) / 10)] + ' ' + ones[num % 10] + (scales[scaleIndex] ? ' ' + scales[scaleIndex] : '') + ' ' + word;
-          num = Math.floor(num / 100);
-        }
-        scaleIndex++;
-      }
-
-      return word.trim();
-    }
-
-    // Event listener for income input - Format and display number with commas as user types
-    document.getElementById('income').addEventListener('input', function() {
-      let incomeValue = this.value.replace(/,/g, '');  // Remove any existing commas
-      if (!isNaN(incomeValue) && incomeValue !== '') {
-        let formattedValue = formatNumberIndian(incomeValue);
-        this.value = formattedValue;  // Update the input with formatted value
-        
-        // Convert the income to words with commas (Indian Numbering System)
-        const words = numberToWords(parseInt(incomeValue));
-        document.getElementById('incomeInWords').textContent = `Amount in Words: ${words}`;
-      }
-    });
 // Tax calculation and form submission
 document.getElementById('taxCalculatorForm').addEventListener('submit', function(e) {
   e.preventDefault();
@@ -131,19 +101,19 @@ document.getElementById('taxCalculatorForm').addEventListener('submit', function
   // Display the result in numeric format
   document.getElementById('taxResult').textContent = `Total Tax Payable: ₹${payableTax.toFixed(2)}`;
 
-  // Display the result in words
-  const taxInWords = numberToWords(payableTax);
-  document.getElementById('taxResultWords').textContent = `Total Tax Payable in Words: ${taxInWords}`;
+  // Clear any previous tax in words output
+  document.getElementById('taxResultWords').textContent = '';
 });
 
-    // Refresh button logic
-    document.getElementById('refreshBtn').addEventListener('click', function() {
-      document.getElementById('income').value = '';  // Clear the input field
-      document.getElementById('taxResult').textContent = '';  // Clear the result text
-      document.getElementById('incomeInWords').textContent = '';  // Clear the amount in words
-      document.getElementById('taxResultWords').textContent = '';  // Clear the tax in words
-    });
-  </script>
+// Refresh button logic
+document.getElementById('refreshBtn').addEventListener('click', function() {
+  document.getElementById('income').value = '';  // Clear the input field
+  document.getElementById('taxResult').textContent = '';  // Clear the result text
+  document.getElementById('taxResultWords').textContent = '';  // Clear the tax in words
+});
+
+    </script>
 
 </body>
+
 </html>
