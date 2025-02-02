@@ -101,8 +101,7 @@
         document.getElementById('incomeInWords').textContent = `Amount in Words: ${words}`;
       }
     });
-
-   // Tax calculation and form submission
+// Tax calculation and form submission
 document.getElementById('taxCalculatorForm').addEventListener('submit', function(e) {
   e.preventDefault();
 
@@ -136,7 +135,6 @@ document.getElementById('taxCalculatorForm').addEventListener('submit', function
   const taxInWords = numberToWords(payableTax);
   document.getElementById('taxResultWords').textContent = `Total Tax Payable in Words: ${taxInWords}`;
 });
-
 
     // Refresh button logic
     document.getElementById('refreshBtn').addEventListener('click', function() {
